@@ -19,6 +19,8 @@ export default new Router({
     { path: "/login", component: Login},
 
     // 后台首页
-    { path: "/", component: Index }
+    { path: "/", component: Index, children: [
+      
+    ] }
   ]
 })

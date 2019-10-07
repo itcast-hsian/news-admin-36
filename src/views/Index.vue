@@ -2,7 +2,34 @@
     <el-container class="container">
         <!-- 侧边栏 -->
         <el-aside width="200px">
-            
+
+            <div class="logo">
+                黑马头条
+            </div>
+
+            <!-- default-active：当前高亮选中的菜单 -->
+            <el-menu
+            default-active="1"
+            class="el-menu-vertical-demo"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b">
+
+                <!-- index是一标识，给default-actives使用的 -->
+                <el-submenu index="1">
+                    <!-- slot="title"必须要保留 -->
+                    <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>文章管理</span>
+                    </template>
+                    <el-menu-item index="1-1">
+                        文章列表
+                    </el-menu-item>
+                    <el-menu-item index="1-2">
+                        发布文章
+                    </el-menu-item>
+                </el-submenu>
+            </el-menu>
         </el-aside>
         <!-- 右侧的内容部分 -->
         <el-container>
@@ -84,5 +111,14 @@ export default {
   
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
+  }
+
+  .logo{
+      height: 60px;
+      width:200px;
+      line-height: 60px;
+      text-align: center;
+      font-size:18px;
+      color:#eee;
   }
 </style>

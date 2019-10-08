@@ -11,7 +11,8 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.12.0",
     "vue": "^2.6.10",
-    "vue-router": "^3.0.3"
+    "vue-router": "^3.0.3",
+    "vue-word-editor": "0.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

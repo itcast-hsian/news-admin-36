@@ -1,8 +1,9 @@
 <template>
+<div>
   <!-- data: 列表的数据对象 -->
   <el-table
     :data="tableData"
-    style="width: 100%">
+    style="width: 100%; margin-bottom:20px;">
 
     <!-- 表格的列 -->
     <!-- label：标签 -->
@@ -52,6 +53,25 @@
       </template>
     </el-table-column>
   </el-table>
+
+  <!-- 分页 -->
+  <!-- size-change：条数切换时候触发的函数
+  current-change：当前页数切换时候触发的函数
+  current-page：当前的页数
+  page-sizes：页面条数的列表
+  page-size: 当前页面的条数
+  layout：布局列表，默认就行
+  total：全部的条数 -->
+  <el-pagination
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+    :current-page="pageIndex"
+    :page-sizes="[5, 10, 15]"
+    :page-size="pageSize"
+    layout="total, sizes, prev, pager, next, jumper"
+    :total="400">
+  </el-pagination>
+</div>
 </template>
 
 <script>
@@ -70,6 +90,16 @@
       },
       handleDelete(index, row) {
         console.log(index, row);
+      },
+
+      // 条数切换时候触发
+      handleSizeChange(val){
+        console.log(val)
+      },
+
+      // 切换页数时候触发
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
       }
     },
 

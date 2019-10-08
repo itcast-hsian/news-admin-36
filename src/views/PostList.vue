@@ -7,21 +7,36 @@
     <!-- 表格的列 -->
     <!-- label：标签 -->
     <el-table-column
-      label="日期"
-      width="180">
+      label="序号"
+      width="60">
 
       <!-- scope.row：数组中当前列的数据对象 -->
       <template slot-scope="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        <span>{{scope.$index + 1}}</span>
       </template>
     </el-table-column>
 
     <el-table-column
-      label="姓名"
+      label="标题"
+      width="300">
+      <template slot-scope="scope">
+        <span>{{scope.row.title}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column
+      label="显示"
       width="180">
       <template slot-scope="scope">
-        <span>{{scope.row.name}}</span>
+        <span>{{scope.row.open === 1 ? '打开': '关闭'}}</span>
+      </template>
+    </el-table-column>
+
+    <el-table-column
+      label="类型"
+      width="180">
+      <template slot-scope="scope">
+        <span>{{scope.row.type === 1 ? '文章': '视频'}}</span>
       </template>
     </el-table-column>
 
@@ -33,7 +48,7 @@
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          @click="handleDelete(scope.$index, scope.row)">关闭</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -43,11 +58,9 @@
   export default {
     data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }]
+        tableData: [],
+        pageIndex: 1,
+        pageSize: 5
       }
     },
     methods: {
@@ -58,6 +71,17 @@
       handleDelete(index, row) {
         console.log(index, row);
       }
+    },
+
+    mounted(){
+      // 请求文章列表
+      this.$axios({
+        url: `/post?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`
+      }).then(res => {
+        const {data} = res.data;
+
+        this.tableData = data;
+      })
     }
   }
 </script>

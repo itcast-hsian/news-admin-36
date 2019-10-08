@@ -46,10 +46,14 @@
         <el-button
           size="mini"
           @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+
+        <!-- 编辑open这个字段 -->
         <el-button
           size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">关闭</el-button>
+          :type="scope.row.open === 0 ? 'success': 'danger'"
+          @click="handleDelete(scope.$index, scope.row)">
+            {{scope.row.open === 0 ? '打开': '关闭'}}
+          </el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -89,8 +93,26 @@
       handleEdit(index, row) {
         console.log(index, row);
       },
+
+      // 关闭或者打开文章
       handleDelete(index, row) {
-        console.log(index, row);
+
+        // 编辑文章的打开状态
+        this.$axios({
+          url: "/post_update/" + row.id,
+          method: 'POST',
+          headers: {
+            Authorization: JSON.parse(localStorage.getItem("user") || `{}`).token
+          },
+          data: {
+            // 给open取反，要么是0，要么是1
+            // open: row.open === 1 ? 0 : 1
+            open: Number(!row.open)
+          }
+        }).then(res => {
+          // 重新请求列表的数据
+          this.getList();
+        })
       },
 
       // 条数切换时候触发

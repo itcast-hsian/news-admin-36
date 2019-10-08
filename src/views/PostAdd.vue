@@ -6,7 +6,7 @@
       </el-form-item>
     
       <div style="position:relative">
-        <vueEditor :config="config"/>
+        <vueEditor :config="config" ref="vueEditor"/>
       </div>
 
       <el-form-item label="栏目">
@@ -39,6 +39,13 @@
         </el-upload>
       </el-form-item>
 
+      <el-form-item label="类型">
+        <el-radio-group v-model="form.type">
+          <el-radio :label="1">文章</el-radio>
+          <el-radio :label="2">视频</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
       </el-form-item>
@@ -58,7 +65,8 @@ export default {
         title: "",
         content: "",
         categories: [],
-        cover: []
+        cover: [],
+        type: 1
       },
 
       // 栏目的列表
@@ -119,7 +127,28 @@ export default {
 
   methods: {
     onSubmit(){
-      console.log(this.form.cover)
+      const {categories} = this.form;
+      this.form.categories = [];
+
+      // 给栏目把数字转换成接口需要的对象
+      categories.forEach(v => {
+        this.form.categories.push({
+          id: v
+        })
+      });
+
+      this.form.content = this.$refs.vueEditor.editor.root.innerHTML;
+
+      this.$axios({
+        url: "/post",
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(localStorage.getItem("user") || `{}`).token
+        },
+        data: this.form
+      }).then(res => {
+        console.log(res)
+      })
     },
 
     // 移除图片时候触发的函数
@@ -136,6 +165,7 @@ export default {
 
       this.form.cover = arr;
     },
+
     // 图片上传成功的回调函数
     handleSuccess(res, file){
       this.form.cover.push({

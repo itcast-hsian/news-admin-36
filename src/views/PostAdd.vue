@@ -5,13 +5,14 @@
         <el-input v-model="form.title"></el-input>
       </el-form-item>
     
-      <div style="position:relative">
-        <vueEditor :config="config" ref="vueEditor"/>
-      </div>
+      <el-form-item label="内容">
+        <el-input v-model="form.content" rows="5" type="textarea"></el-input>
+      </el-form-item>
 
       <el-form-item label="栏目">
         <!-- 栏目的数据来自于后台 -->
         <el-checkbox-group v-model="form.categories">
+          <!-- allCate所有的栏目 -->
           <el-checkbox 
           v-for="(item, index) in allCate"
           :key="index"
@@ -54,8 +55,6 @@
 </template>
 <script>
 
-import vueEditor from "vue-word-editor";
-import "quill/dist/quill.snow.css"
 export default {
   name: 'app',
   data(){
@@ -73,56 +72,7 @@ export default {
       allCate: [],
       // token
       token: JSON.parse(localStorage.getItem(`user`) || `{}`).token,
-
-      config: {
-        modules: { 
-          toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            ['blockquote', 'code-block'],
-            ['image', 'video'],
-            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-            [{ 'direction': 'rtl' }],                         // text direction
-          ]
-        },
-        theme: 'snow',
-        uploadImage: {
-          url: "http://localhost:3000/upload",
-          headers: {
-            Authorization: JSON.parse(localStorage.getItem("user") || `{}`).token
-          },
-          name: "file",
-          uploadBefore(file){
-            return true
-          },
-          uploadProgress(res){
-          },
-          uploadSuccess(res, insert){
-            insert("http://localhost:3000" + res.data[0].url)
-          },
-          uploadError(){},
-          showProgress: false
-        },
-        uploadVideo: {
-          url: "http://localhost:1337/upload",
-          name: "files",
-          uploadBefore(file){
-            return true
-          },
-          uploadProgress(res){
-          },
-          uploadSuccess(res, insert){
-            insert("http://localhost:1337" + res.data[0].url)
-          },
-          uploadError(){},
-        }
-      }
     }
-  },
-  components: {
-    vueEditor
   },
 
   methods: {
@@ -137,8 +87,6 @@ export default {
         })
       });
 
-      this.form.content = this.$refs.vueEditor.editor.root.innerHTML;
-
       this.$axios({
         url: "/post",
         method: "POST",
@@ -147,7 +95,9 @@ export default {
         },
         data: this.form
       }).then(res => {
-        console.log(res)
+        const {message} = res.data;
+
+        this.$message.success(message)
       })
     },
 

@@ -5,7 +5,7 @@
         <el-input v-model="form.title"></el-input>
       </el-form-item>
     
-      <div>
+      <div style="position:relative">
         <vueEditor :config="config"/>
       </div>
 
@@ -119,16 +119,28 @@ export default {
 
   methods: {
     onSubmit(){
-      console.log(this.form.categories)
+      console.log(this.form.cover)
     },
 
     // 移除图片时候触发的函数
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      const id = file.response.data.id;
+      const arr = []
+
+      this.form.cover.forEach(v => {
+        // 从cover中删除掉已经移除的图片
+        if(v.id !== id){
+          arr.push(v)
+        }
+      })
+
+      this.form.cover = arr;
     },
     // 图片上传成功的回调函数
     handleSuccess(res, file){
-      console.log(res, file)
+      this.form.cover.push({
+        id: res.data.id
+      })
     }
   },
 

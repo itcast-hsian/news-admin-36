@@ -41,20 +41,50 @@
             </el-header>
             <!-- 子页面显示的内容 -->
             <el-main>
-                
+                <div>{{ breaks }}</div>
                 <!-- 显示子路由匹配的页面 -->
                 <router-view></router-view>
             </el-main>
         </el-container>
+        
     </el-container>
 </template>
 
 <script>
 export default {
-
+    
     data(){
         return {
-            user: JSON.parse(localStorage.getItem("user") || `{}` )
+            user: JSON.parse(localStorage.getItem("user") || `{}` ),
+            // breaks: ""
+        }
+    },
+
+    // 监听url地址栏的变化,watch页面一加载时候不会执行，只有等到url变化时候才会执行
+    // watch: {
+    //     $route(){
+    //         const {matched} = this.$route;
+    //         const arr = [];
+
+    //         matched.forEach(v => {
+    //             arr.push(v.meta)
+    //         })
+
+    //         this.breaks = arr.join(" / ")  
+    //     }
+    // },
+
+    // computed里面的函数监听到函数中引用的所有实例下的属性的变化
+    computed: {
+        breaks(){
+            const {matched} = this.$route;
+            const arr = [];
+
+            matched.forEach(v => {
+                arr.push(v.meta)
+            })
+
+            return arr.join(" / ");
         }
     },
 

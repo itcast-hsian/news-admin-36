@@ -1,5 +1,5 @@
 <template>
-  <div>发布文章</div>
+  <div>456</div>
 </template>
 
 <script>

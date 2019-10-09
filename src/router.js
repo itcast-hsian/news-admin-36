@@ -5,6 +5,7 @@ import Login from "@/views/Login"
 import Index from "@/views/Index"
 import PostList from "@/views/PostList";
 import PostAdd from "@/views/PostAdd";
+import PostEdit from "@/views/PostEdit";
 
 // 注册路由插件
 Vue.use(Router)
@@ -27,7 +28,8 @@ export default new Router({
       meta: "首页",
       children: [
         { path: "post_list", component: PostList, meta: "文章列表",},
-        { path: "post_add", component: PostAdd,  meta: "发布文章",}
+        { path: "post_add", component: PostAdd,  meta: "发布文章",},
+        { path: "post_edit/:id", component: PostEdit,  meta: "编辑文章",}
       ]}
   ]
 })

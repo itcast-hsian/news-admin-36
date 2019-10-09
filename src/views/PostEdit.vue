@@ -13,21 +13,7 @@
       </el-form-item>
     
       <el-form-item label="内容" v-if="form.type === 1">
-        <!-- <el-input v-model="form.content" rows="5" type="textarea"></el-input> -->
         <VueEditor :config="config"  ref="vueEditor"/>
-      </el-form-item>
-
-      <el-form-item label="视频" v-if="form.type === 2">
-        <el-upload
-          :action="`${$axios.defaults.baseURL}/upload`"
-          name="file"
-          :headers="{
-             Authorization: token
-          }"
-          :on-success="handleVideoSuccess"
-          >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
       </el-form-item>
 
       <el-form-item label="封面">
@@ -42,6 +28,7 @@
              Authorization: token
           }"
           list-type="picture-card"
+          :file-list="form.cover"
           :on-success="handleSuccess"
           :on-remove="handleRemove">
           <i class="el-icon-plus"></i>
@@ -56,7 +43,7 @@
 </template>
 <script>
 // 导入富文本编辑器
-import VueEditor from "vue-word-editor";
+import VueEditor from "vue-word-editor"; // vue-quill-editor tiny
 import "quill/dist/quill.snow.css"
 
 export default {
@@ -112,23 +99,13 @@ export default {
 
   methods: {
     onSubmit(){
-      const {categories} = this.form;
-      this.form.categories = [];
-
-      // 给栏目把数字转换成接口需要的对象
-      categories.forEach(v => {
-        this.form.categories.push({
-          id: v
-        })
-      });
-
       // 使用refs获取编辑器中内容
       if(this.form.type === 1){
         this.form.content = this.$refs.vueEditor.editor.root.innerHTML;
       }
 
       this.$axios({
-        url: "/post",
+        url: "/post_update/" + this.$route.params.id,
         method: "POST",
         headers: {
           Authorization: JSON.parse(localStorage.getItem("user") || `{}`).token
@@ -143,23 +120,16 @@ export default {
 
     // 移除图片时候触发的函数
     handleRemove(file, fileList) {
-      const id = file.response.data.id;
-      const arr = []
 
-      this.form.cover.forEach(v => {
-        // 从cover中删除掉已经移除的图片
-        if(v.id !== id){
-          arr.push(v)
-        }
-      })
-
-      this.form.cover = arr;
+      console.log(file, fileList);
+      this.form.cover = fileList;
     },
 
     // 图片上传成功的回调函数
     handleSuccess(res, file){
       this.form.cover.push({
-        id: res.data.id
+        id: res.data.id,
+        url: this.$axios.defaults.baseURL +res.data.url
       })
     },
 
@@ -180,15 +150,28 @@ export default {
       const {data} = res.data;
 
       // 把详情的数据赋值给data的form
+      // 把文章的内容回显到表单中
       this.form = {
         title: data.title,
         content: "",
-        cover: data.cover, // 需要优化
+        cover: [],
         type: data.type
       }
 
+      // 有些封面图片是网络图片带有http，本地的图片没有http，服务器的路径
+      data.cover.forEach(v =>  {
+        if(v.url.indexOf("http") === -1){
+          // 本地服务器的图片
+          v.url = this.$axios.defaults.baseURL + v.url;
+        }
 
-      this.$refs.vueEditor.editor.container.innerHTML = data.content;
+        // 修改没有http开头的本地图片
+        this.form.cover.push(v)
+      });
+
+      // 把文章的内容赋值给富文本编辑器
+      // this.$refs.vueEditor.editor.root.innerHTML = data.content;
+      this.$refs.vueEditor.editor.clipboard.dangerouslyPasteHTML(0,data.content);
     })
   }
 }

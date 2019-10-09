@@ -37,7 +37,7 @@
             <el-header>
                 <img :src="$axios.defaults.baseURL + user.user.head_img" alt="" class="head">
                 <span>{{ user.user.nickname }}</span>
-                <span>退出</span>
+                <span @click="handleLogout" style="cursor:pointer">退出</span>
             </el-header>
             <!-- 子页面显示的内容 -->
             <el-main>
@@ -88,8 +88,17 @@ export default {
         }
     },
 
-    mounted(){
-
+    methods: {
+        handleLogout(){
+            this.$confirm('确定退出?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                localStorage.removeItem(`user`);
+                this.$router.push("/login");
+            });
+        }
     }
 }
 </script>
